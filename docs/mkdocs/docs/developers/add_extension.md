@@ -134,7 +134,7 @@ extensions/
             publisher          = "MicrosoftWindowsServer"
             offer              = "WindowsServer"
             windows_sku        = "2019-Datacenter"
-            windows_version    = "17763.4377.230505"
+            windows_version    = "latest" # "17763.4377.230505"
             private_ip_address = "{{ip_range}}.10"
             password           = "goadadmin_password"
             size               = "Standard_B2s"  # 2cpu/4G

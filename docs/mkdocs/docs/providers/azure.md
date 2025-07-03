@@ -77,7 +77,7 @@ GOAD/azure/remote/192.168.56.X > install
   publisher          = "MicrosoftWindowsServer"
   offer              = "WindowsServer"
   windows_sku        = "2019-Datacenter"
-  windows_version    = "17763.4377.230505"
+  windows_version    = "latest" # "17763.4377.230505"
   private_ip_address = "{{ip_range}}.10"
   password           = "8dCT-DJjgScp"
   size               = "Standard_B2s"
