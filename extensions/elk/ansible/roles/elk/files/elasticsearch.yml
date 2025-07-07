@@ -87,3 +87,5 @@ discovery.type: single-node
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false

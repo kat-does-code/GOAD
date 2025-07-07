@@ -345,7 +345,7 @@ class LabInstance:
             instance_extension_inventory_file = self.instance_path + sep + extension + '_inventory'
             with open(instance_extension_inventory_file, mode="w", encoding="utf-8") as inventory_file:
                 inventory_file.write(instance_extension_inventory_content)
-                Log.success(f'Instance inventory file created : {Utils.get_relative_path(instance_extension_inventory_file)}')
+                Log.success(f'Instance inventory file created for extension : {Utils.get_relative_path(instance_extension_inventory_file)}')
 
     def update_instance_folder(self):
         self.create_instance_folder(True)

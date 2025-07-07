@@ -22,15 +22,16 @@
     state: present
     update_cache: true
 
-- name: Install logstash
+- name: Install elastic-agent
   apt:
-    name: logstash
+    name: elastic-agent
     state: present
 
-- name: Install java
-  apt:
-    name: openjdk-11-jre
-    state: present
+# Probably not necessary as java is bundled with Elastic 
+# - name: Install java
+#   apt:
+#     name: openjdk-11-jre
+#     state: present
 
 - name: Install elasticsearch
   apt:
@@ -64,9 +65,18 @@
     group: "elasticsearch"
     mode: 0660
 
-- name: enable logstash
+
+# - name: copy elastic-agent config
+#   copy:
+#     src: elastic-agent.yml
+#     dest: /etc/elastic-agent/elastic-agent.yml
+#     owner: "root"
+#     group: "elastic-agent"
+#     mode: 0660
+
+- name: enable elastic-agent
   service:
-    name: logstash
+    name: elastic-agent
     enabled: yes
 
 - name: enable elasticsearch
@@ -79,9 +89,9 @@
     name: kibana
     enabled: yes
 
-- name: start logstash
+- name: start elastic-agent
   service:
-    name: logstash
+    name: elastic-agent
     state: started
 
 - name: start elasticsearch

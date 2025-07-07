@@ -14,11 +14,6 @@ variable "linux_vm_config" {
   }
 }
 
-resource "tls_private_key" "linux_ssh" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 resource "azurerm_linux_virtual_machine" "goad-linux-vm" {
   for_each = var.linux_vm_config
 
@@ -36,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "goad-linux-vm" {
 
   admin_ssh_key {
     username   = var.username
-    public_key = tls_private_key.linux_ssh.public_key_openssh
+    public_key = tls_private_key.ssh.public_key_openssh
   }
 
   os_disk {
@@ -49,9 +44,5 @@ resource "azurerm_linux_virtual_machine" "goad-linux-vm" {
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = each.value.linux_sku # "22_04-lts-gen2"
     version   = each.value.linux_version # "latest"
-  }
-
-  provisioner "local-exec" {
-    command = "echo '${tls_private_key.linux_ssh.private_key_pem}' > ../ssh_keys/${each.value.name}_ssh.pem && chmod 600 ../ssh_keys/${each.value.name}_ssh.pem"
   }
 }

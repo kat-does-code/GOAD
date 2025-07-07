@@ -57,3 +57,39 @@ resource "azurerm_linux_virtual_machine" "jumpbox" {
     command = "echo '${tls_private_key.ssh.private_key_pem}' > ../ssh_keys/ubuntu-jumpbox.pem && chmod 600 ../ssh_keys/ubuntu-jumpbox.pem"
   }
 }
+
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [ azurerm_linux_virtual_machine.jumpbox ]
+
+  create_duration = "30s"
+}
+
+resource "remote_file" "jumpbox_ssh_private_key" {
+  depends_on = [time_sleep.wait_30_seconds]
+
+  conn {
+    host        = azurerm_linux_virtual_machine.jumpbox.public_ip_address
+    port        = 22
+    user        = var.jumpbox_username
+    private_key = tls_private_key.ssh.private_key_openssh
+  }
+
+  path = "/home/${var.jumpbox_username}/.ssh/id_rsa"
+  content = tls_private_key.ssh.private_key_openssh
+  permissions = 600
+}
+
+resource "remote_file" "jumpbox_ssh_public_key" {
+  depends_on = [time_sleep.wait_30_seconds]
+
+  conn {
+    host        = azurerm_linux_virtual_machine.jumpbox.public_ip_address
+    port        = 22
+    user        = var.jumpbox_username
+    private_key = tls_private_key.ssh.private_key_openssh
+  }
+
+  path = "/home/${var.jumpbox_username}/.ssh/id_rsa.pub"
+  content = tls_private_key.ssh.public_key_openssh
+  permissions = 750
+}

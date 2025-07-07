@@ -5,7 +5,8 @@
   roles:
     - { role: 'elk', tags: 'elk' }
 
-- name: Install log agent on windows vms
-  hosts: elk_log
-  roles:
-    - { role: 'logs_windows', tags: 'agent' }
+# Temporaril disable logstash installation as we need to upgrade to elastic agent
+# - name: Install log agent on windows vms
+#   hosts: elk_log
+#   roles:
+#     - { role: 'logs_windows', tags: 'agent' }

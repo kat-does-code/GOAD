@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "=3.116.0"
     }
+    remote = {
+      source = "tenstad/remote"
+      version = "0.2.0"
+    }
   }
 
   required_version = ">= 0.10.0"

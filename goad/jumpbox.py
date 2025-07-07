@@ -65,9 +65,10 @@ class JumpBox:
             destination = f'{self.username}@{self.ip}:~/GOAD/workspace/'
             self.command.rsync(source, destination, self.ssh_key, False)
         else:
-            Log.error('Can not sync source jumpbox ip is invalid')
+            Log.error(f'Can not sync source jumpbox ip: "{self.ip}" is invalid')
 
     def run_command(self, command, path):
+        "Runs a command on the jumpbox via SSH. Called by Provisioners."
         ssh_cmd = f'ssh -t -o StrictHostKeyChecking=no -i {self.ssh_key} {self.username}@{self.ip} "cd {path} && {command}"'
         result = self.command.run_command(ssh_cmd, project_path)
         return result
