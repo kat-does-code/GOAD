@@ -3,6 +3,9 @@
   "manifest": {
     "version": 1,
     "install": {
+      "ansible-lint": {
+        "pkg-path": "ansible-lint"
+      },
       "azure-cli": {
         "pkg-path": "azure-cli"
       },
@@ -39,6 +42,126 @@
     }
   },
   "packages": [
+    {
+      "attr_path": "ansible-lint",
+      "broken": false,
+      "derivation": "/nix/store/qvkfwgq5z55m2514lyp4daplw0gc655y-ansible-lint-25.5.0.drv",
+      "description": "Best practices checker for Ansible",
+      "install_id": "ansible-lint",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "ansible-lint-25.5.0",
+      "pname": "ansible-lint",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T04:56:13.621985Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "25.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/px11l3kdj17z1pwc4pgalih3h3d108s1-ansible-lint-25.5.0-dist",
+        "out": "/nix/store/afvyk4a2l7hw6kwrbgnm873g2xc31hii-ansible-lint-25.5.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible-lint",
+      "broken": false,
+      "derivation": "/nix/store/l67l1pbmwdbnf51hl6inr39z5d3c3306-ansible-lint-25.5.0.drv",
+      "description": "Best practices checker for Ansible",
+      "install_id": "ansible-lint",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "ansible-lint-25.5.0",
+      "pname": "ansible-lint",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:19:53.323364Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "25.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/gsrd04jq2p38s7zp7g1yyxpw43ai3w0f-ansible-lint-25.5.0-dist",
+        "out": "/nix/store/qn6zf809g7xgp09d7sgqlqfq8d11wib4-ansible-lint-25.5.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible-lint",
+      "broken": false,
+      "derivation": "/nix/store/jady4sy926h47n5disyqdixdzw6mzxwr-ansible-lint-25.5.0.drv",
+      "description": "Best practices checker for Ansible",
+      "install_id": "ansible-lint",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "ansible-lint-25.5.0",
+      "pname": "ansible-lint",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T05:38:12.253995Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "25.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/c3md5z6yd2fm3vxss00air4cmiz24a8w-ansible-lint-25.5.0-dist",
+        "out": "/nix/store/dvzb3a1rb39klf3sg8av8zcqmb6rqcxx-ansible-lint-25.5.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible-lint",
+      "broken": false,
+      "derivation": "/nix/store/bh2yq2hwxfv1dp0ql3gfl6a0inabwslf-ansible-lint-25.5.0.drv",
+      "description": "Best practices checker for Ansible",
+      "install_id": "ansible-lint",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "name": "ansible-lint-25.5.0",
+      "pname": "ansible-lint",
+      "rev": "30e2e2857ba47844aa71991daa6ed1fc678bcbb7",
+      "rev_count": 822156,
+      "rev_date": "2025-06-27T08:03:01Z",
+      "scrape_date": "2025-06-29T06:00:01.432487Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "25.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/wz38l0r2v66cdv8nda91sm2w1hv10wzs-ansible-lint-25.5.0-dist",
+        "out": "/nix/store/xw5lhhlwxrcsi6hvc8nvfl4h68bz90wv-ansible-lint-25.5.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
     {
       "attr_path": "azure-cli",
       "broken": false,

@@ -4,6 +4,9 @@
   become: yes
   roles:
     - { role: 'elk', tags: 'elk' }
+  vars:
+    ansible_remote_tmp: /tmp/.ansible-${USER}
+
 
 - name: Install log agent on windows vms
   hosts: elk_log

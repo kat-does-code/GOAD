@@ -100,3 +100,6 @@ xpack.security.http.ssl.enabled: true
 # Paths to your SSL certificate and key
 xpack.security.http.ssl.keystore.path: /etc/elasticsearch/certs/http.p12
 xpack.security.http.ssl.certificate_authorities: [ "/etc/elasticsearch/certs/http_ca.crt" ]
+
+# Enable enrollment for Kibana systems
+xpack.security.enrollment.enabled: true

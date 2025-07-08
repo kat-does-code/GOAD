@@ -1,3 +1,4 @@
+# Set up apt and install elk stack
 - name: "Update cache"
   apt:
     update_cache: true
@@ -22,17 +23,6 @@
     state: present
     update_cache: true
 
-- name: Install elastic-agent
-  apt:
-    name: elastic-agent
-    state: present
-
-# Probably not necessary as java is bundled with Elastic 
-# - name: Install java
-#   apt:
-#     name: openjdk-11-jre
-#     state: present
-
 - name: Install elasticsearch
   apt:
     name: elasticsearch
@@ -42,7 +32,54 @@
   apt:
     name: kibana
     state: present
+    
+- name: elasticsearch change start timeout to 3min
+  lineinfile:
+    destfile: /usr/lib/systemd/system/elasticsearch.service
+    regexp: 'TimeoutStartSec='
+    line: 'TimeoutStartSec=180'
 
+# # Create elasticsearch and kibana users
+# - name: Ensure elasticsearch user exists
+#   ansible.builtin.user:
+#     name: elasticsearch
+#     system: yes
+#     shell: /usr/sbin/nologin
+#     create_home: no
+
+# - name: Ensure kibana user exists
+#   ansible.builtin.user:
+#     name: kibana
+#     system: yes
+#     shell: /usr/sbin/nologin
+#     create_home: no
+
+
+# - name: Set ownership for Elasticsearch config, data, and logs
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: elasticsearch
+#     group: elasticsearch
+#     recurse: yes
+#   loop:
+#     - /etc/elasticsearch
+#     - /var/lib/elasticsearch
+#     - /var/log/elasticsearch
+
+# - name: Set ownership for Kibana config and logs
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: kibana
+#     group: kibana
+#     recurse: yes
+#   loop:
+#     - /etc/kibana
+#     - /var/log/kibana
+#     - /usr/share/kibana
+
+# Copy config files 
 - name: copy kibana config
   copy:
     src: kibana.yml
@@ -50,12 +87,6 @@
     owner: "root"
     group: "kibana"
     mode: 0660
-
-- name: elasticsearch change start timeout to 3min
-  lineinfile:
-    destfile: /usr/lib/systemd/system/elasticsearch.service
-    regexp: 'TimeoutStartSec='
-    line: 'TimeoutStartSec=180'
 
 - name: copy elasticsearch config
   copy:
@@ -74,30 +105,17 @@
 #     group: "elastic-agent"
 #     mode: 0660
 
-- name: enable elastic-agent
-  service:
-    name: elastic-agent
-    enabled: yes
-
-- name: enable elasticsearch
-  service:
-    name: elasticsearch
-    enabled: yes
-
-- name: enable kibana
-  service:
-    name: kibana
-    enabled: yes
-
-- name: start elastic-agent
-  service:
-    name: elastic-agent
-    state: started
+# Start and setup ELK components
+# - name: start elastic-agent
+#   service:
+#     name: elastic-agent
+#     state: started
 
 - name: start elasticsearch
   service:
     name: elasticsearch
     state: started
+    enabled: true
 
 - name: reset elasticsearch password
   become: true
@@ -106,13 +124,26 @@
 
 - name: capture_elastic_passsword
   set_fact:
-    elastic_password: "{{ elastic_password_reset.stdout | regex_search('New value: (\\S+)', '\\1') }}"
+    elastic_password: "{{ elastic_password_reset.stdout | regex_search('New value: (\\S+)', '\\1') | first }}"
 
-- name: Show new password
+- name: create_kibana_token
+  become: true
+  command: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana --url https://192.168.56.50:9200
+  register: enrollment_token
+
+- name: Run Kibana as kibana user
+  shell: "sudo -u kibana /usr/share/kibana/bin/kibana-setup --enrollment-token {{ enrollment_token.stdout }}"
+  become: true
+  environment:
+    TMPDIR: /tmp/.ansible-kibana
+
+- name: Show password and enrollment token
   debug:
-    msg: "New elastic password is: {{ elastic_password }}"
+    msg: |
+      Elastic credentials: elastic:{{ elastic_password }} 
 
 - name: start kibana
   service:
     name: kibana
     state: started
+    enabled: true
