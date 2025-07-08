@@ -99,6 +99,19 @@
     name: elasticsearch
     state: started
 
+- name: reset elasticsearch password
+  become: true
+  command: /usr/share/elasticsearch/bin/elasticsearch-reset-password --batch --user elastic
+  register: elastic_password_reset
+
+- name: capture_elastic_passsword
+  set_fact:
+    elastic_password: "{{ elastic_password_reset.stdout | regex_search('New value: (\\S+)', '\\1') }}"
+
+- name: Show new password
+  debug:
+    msg: "New elastic password is: {{ elastic_password }}"
+
 - name: start kibana
   service:
     name: kibana
