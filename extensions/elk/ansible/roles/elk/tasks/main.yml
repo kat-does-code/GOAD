@@ -131,13 +131,13 @@
   command: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana --url https://192.168.56.50:9200
   register: enrollment_token
 
-- name: Run Kibana as kibana user
+- name: Enroll kibana with the token
   shell: "sudo -u kibana /usr/share/kibana/bin/kibana-setup --enrollment-token {{ enrollment_token.stdout }}"
   become: true
   environment:
     TMPDIR: /tmp/.ansible-kibana
 
-- name: Show password and enrollment token
+- name: Show creds
   debug:
     msg: |
       Elastic credentials: elastic:{{ elastic_password }} 
