@@ -9,6 +9,7 @@
     name:
       - apt-transport-https
       - gnupg2
+      - unzip
     state: present
     update_cache: yes
 
@@ -23,61 +24,19 @@
     state: present
     update_cache: true
 
-- name: Install elasticsearch
+- name: Install ELK stack
   apt:
-    name: elasticsearch
+    name: 
+      - elasticsearch
+      - kibana
+      - elastic-agent
     state: present
 
-- name: Install kibana
-  apt:
-    name: kibana
-    state: present
-    
 - name: elasticsearch change start timeout to 3min
   lineinfile:
     destfile: /usr/lib/systemd/system/elasticsearch.service
     regexp: 'TimeoutStartSec='
     line: 'TimeoutStartSec=180'
-
-# # Create elasticsearch and kibana users
-# - name: Ensure elasticsearch user exists
-#   ansible.builtin.user:
-#     name: elasticsearch
-#     system: yes
-#     shell: /usr/sbin/nologin
-#     create_home: no
-
-# - name: Ensure kibana user exists
-#   ansible.builtin.user:
-#     name: kibana
-#     system: yes
-#     shell: /usr/sbin/nologin
-#     create_home: no
-
-
-# - name: Set ownership for Elasticsearch config, data, and logs
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     owner: elasticsearch
-#     group: elasticsearch
-#     recurse: yes
-#   loop:
-#     - /etc/elasticsearch
-#     - /var/lib/elasticsearch
-#     - /var/log/elasticsearch
-
-# - name: Set ownership for Kibana config and logs
-#   ansible.builtin.file:
-#     path: "{{ item }}"
-#     state: directory
-#     owner: kibana
-#     group: kibana
-#     recurse: yes
-#   loop:
-#     - /etc/kibana
-#     - /var/log/kibana
-#     - /usr/share/kibana
 
 # Copy config files 
 - name: copy kibana config
@@ -97,25 +56,22 @@
     mode: 0660
 
 
-# - name: copy elastic-agent config
-#   copy:
-#     src: elastic-agent.yml
-#     dest: /etc/elastic-agent/elastic-agent.yml
-#     owner: "root"
-#     group: "elastic-agent"
-#     mode: 0660
-
-# Start and setup ELK components
-# - name: start elastic-agent
-#   service:
-#     name: elastic-agent
-#     state: started
-
 - name: start elasticsearch
   service:
     name: elasticsearch
     state: started
     enabled: true
+
+- name: create_kibana_token
+  become: true
+  command: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana --url https://192.168.56.50:9200
+  register: kibana_enrollment_token
+
+- name: Enroll kibana with the token
+  shell: "sudo -u kibana /usr/share/kibana/bin/kibana-setup --enrollment-token {{ kibana_enrollment_token.stdout }}"
+  become: true
+  environment:
+    TMPDIR: /tmp/.ansible-kibana
 
 - name: reset elasticsearch password
   become: true
@@ -126,24 +82,82 @@
   set_fact:
     elastic_password: "{{ elastic_password_reset.stdout | regex_search('New value: (\\S+)', '\\1') | first }}"
 
-- name: create_kibana_token
-  become: true
-  command: /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana --url https://192.168.56.50:9200
-  register: enrollment_token
+- name: Save elastic password on control node
+  copy:
+    content: "{{ elastic_password }}"
+    dest: "/home/goad/elastic_password.txt"
+    mode: '0644'
+    owner: goad
+  delegate_to: localhost
 
-- name: Enroll kibana with the token
-  shell: "sudo -u kibana /usr/share/kibana/bin/kibana-setup --enrollment-token {{ enrollment_token.stdout }}"
-  become: true
-  environment:
-    TMPDIR: /tmp/.ansible-kibana
+- name: hardcode elastic password into config file
+  template:
+    src: elastic-agent.yml
+    dest: /etc/elastic-agent/elastic-agent.yml
+  vars:
+    elastic_password: "{{ elastic_password }}"  
 
 - name: Show creds
   debug:
     msg: |
-      Elastic credentials: elastic:{{ elastic_password }} 
+      Elastic user password: {{ elastic_password }} 
 
 - name: start kibana
   service:
     name: kibana
     state: started
     enabled: true
+
+- name: Wait until the REST endpoint is available
+  ansible.builtin.uri:
+    url: "http://localhost:5601/api/status"
+    method: GET
+    status_code: 200
+    return_content: no
+    url_username: "elastic"
+    url_password: "{{ elastic_password }}"
+    force_basic_auth: yes
+  register: api_status
+  until: api_status.status == 200
+  delay: 10    # seconds between retries
+  retries: 10  # maximum number of retries (adjust as needed)
+  ignore_errors: no
+
+- name: Generate enrollment token for Fleet API
+  uri:
+    url: "http://localhost:5601/api/fleet/service_tokens"
+    method: POST
+    headers:
+      kbn-xsrf: "true"
+      Content-Type: "application/json"
+    user: "elastic"
+    password: "{{ elastic_password }}"
+    return_content: yes
+    status_code: 200
+    force_basic_auth: yes
+  register: response
+
+- name: Parse the enrollment token from the response
+  set_fact:
+    enrollment_token: "{{ response.json.value }}"
+
+# - name: Print the enrollment token (for debugging)
+#   debug:
+#     msg: "Generated enrollment token: {{ enrollment_token }}"
+
+- name: Update Elastic Agent config with the enrollment token
+  ansible.builtin.replace:
+    path: "/etc/elastic-agent/elastic-agent.yml"  # Path to the agent configuration file
+    regexp: 'token: "YOUR_ENROLLMENT_TOKEN"'
+    replace: 'token: "{{ enrollment_token }}"'
+
+- name: Generate kibana encryption keys
+  command: /usr/share/kibana/bin/kibana-encryption-keys generate --silent
+  register: encryption_keys
+
+- name: start elastic-agent
+  service:
+    name: elastic-agent
+    state: started
+    enabled: true
+

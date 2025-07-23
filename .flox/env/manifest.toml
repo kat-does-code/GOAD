@@ -22,6 +22,7 @@ azure-cli.pkg-path = "azure-cli"
 terraform.pkg-path = "terraform"
 sshpass.pkg-path = "sshpass"
 ansible-lint.pkg-path = "ansible-lint"
+ansible.pkg-path = "ansible"
 
 
 ## Environment Variables ---------------------------------------------

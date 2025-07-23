@@ -18,7 +18,7 @@
   password           = "NgtI75cKV+Pu"
   size               = "Standard_B2s"
 }
-"srv02" = {
+"srv02" = { 
   name               = "srv02"
   publisher          = "MicrosoftWindowsServer"
   offer              = "WindowsServer"

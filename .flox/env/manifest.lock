@@ -3,6 +3,9 @@
   "manifest": {
     "version": 1,
     "install": {
+      "ansible": {
+        "pkg-path": "ansible"
+      },
       "ansible-lint": {
         "pkg-path": "ansible-lint"
       },
@@ -42,6 +45,130 @@
     }
   },
   "packages": [
+    {
+      "attr_path": "ansible",
+      "broken": false,
+      "derivation": "/nix/store/slsjzw2szag0vjpwi77sqbhnxhcj0xn4-python3.13-ansible-core-2.18.6.drv",
+      "description": "Radically simple IT automation",
+      "install_id": "ansible",
+      "license": "GPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "name": "ansible-core-2.18.6",
+      "pname": "ansible",
+      "rev": "9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "rev_count": 826938,
+      "rev_date": "2025-07-08T14:16:20Z",
+      "scrape_date": "2025-07-10T05:14:30.112981Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.18.6",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/r3zj58vszcdyzahilr5386sifrn18pb0-python3.13-ansible-core-2.18.6-dist",
+        "out": "/nix/store/inkl7p75yjg1ikrqrdwjhngz45zdahfs-python3.13-ansible-core-2.18.6"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible",
+      "broken": false,
+      "derivation": "/nix/store/dy1nw2mkva1x09q5y55l95kp05l2q6k8-python3.13-ansible-core-2.18.6.drv",
+      "description": "Radically simple IT automation",
+      "install_id": "ansible",
+      "license": "GPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "name": "ansible-core-2.18.6",
+      "pname": "ansible",
+      "rev": "9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "rev_count": 826938,
+      "rev_date": "2025-07-08T14:16:20Z",
+      "scrape_date": "2025-07-10T05:34:50.078033Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.18.6",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/9hpk8xdlw4lixq47zfgw9034dh3ml8yx-python3.13-ansible-core-2.18.6-dist",
+        "out": "/nix/store/a894dakl9993gnq6w2s55dlkdhdkvksa-python3.13-ansible-core-2.18.6"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible",
+      "broken": false,
+      "derivation": "/nix/store/rzrvlmb1p4v6sfjyci6jv2abhznj1y59-python3.13-ansible-core-2.18.6.drv",
+      "description": "Radically simple IT automation",
+      "install_id": "ansible",
+      "license": "GPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "name": "ansible-core-2.18.6",
+      "pname": "ansible",
+      "rev": "9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "rev_count": 826938,
+      "rev_date": "2025-07-08T14:16:20Z",
+      "scrape_date": "2025-07-10T05:53:48.426837Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.18.6",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/93jy7c9lfymlm3606vjsxgzsgrr4s155-python3.13-ansible-core-2.18.6-dist",
+        "out": "/nix/store/h5rdlmfk932ps2383fq4m18qyapia7h4-python3.13-ansible-core-2.18.6"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ansible",
+      "broken": false,
+      "derivation": "/nix/store/ik3nnl44b7q4vv74nkqa41ffjaw9ryrc-python3.13-ansible-core-2.18.6.drv",
+      "description": "Radically simple IT automation",
+      "install_id": "ansible",
+      "license": "GPL-3.0-or-later",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "name": "ansible-core-2.18.6",
+      "pname": "ansible",
+      "rev": "9807714d6944a957c2e036f84b0ff8caf9930bc0",
+      "rev_count": 826938,
+      "rev_date": "2025-07-08T14:16:20Z",
+      "scrape_date": "2025-07-10T06:15:24.402272Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "2.18.6",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/a2fqnlz650iqarmzldldkww2fqgx9q8j-python3.13-ansible-core-2.18.6-dist",
+        "out": "/nix/store/rijnxv7h1jz34prh4an99c1pd1qwrxhm-python3.13-ansible-core-2.18.6"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
     {
       "attr_path": "ansible-lint",
       "broken": false,

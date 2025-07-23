@@ -1,71 +1,42 @@
-- name: Install winlogbeat
-  import_tasks: winlogbeat.yml
+- name: Load elastic password from control node file
+  set_fact:
+    elastic_password: "{{ lookup('file', '/home/goad/elastic_password.txt') | trim }}"
 
-- name: Set winlogbeat config file
-  win_copy:
-    src: winlogbeat.yml
-    dest: C:\ProgramData\chocolatey\lib\winlogbeat\tools\
+- name: Check if Elastic Agent service exists
+  ansible.windows.win_service_info:
+    name: Elastic Agent
+  register: agent_service
 
-# sysmon install (https://github.com/NVISOsecurity/ansible-sysmon)
-- name: Create directory
+- name: install elastic agent
+  win_shell: C:\Temp\Agent\elastic-agent-9.0.3-windows-x86_64\elastic-agent.exe install --non-interactive
+  when: agent_service.exists == false
+
+- name: make installation directory
   win_file:
-    path: "{{ sysmon_install_location }}"
+    path: C:\Temp\Agent\
     state: directory
-  register: result
+  when: agent_service.exists == false
 
-- name: Get sysmon zip
-  win_copy:
-    src: "{{ sysmon_download_file }}{{ file_ext }}"
-    dest: "{{ sysmon_install_location }}/{{ sysmon_download_file }}{{ file_ext }}"
+- name: download elastic agent
+  win_get_url: 
+    url: https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-9.0.3-windows-x86_64.zip
+    dest: C:\Temp\Agent\elastic-agent-9.0.3-windows-x86_64.zip
+  when: agent_service.exists == false
 
-- name: Unzip sysmon
-  win_unzip:
-    src: "{{ sysmon_install_location }}/{{ sysmon_download_file }}{{ file_ext }}"
-    dest: "{{ sysmon_install_location }}"
+- name: unzip elastic agent
+  win_unzip: 
+    src: C:\Temp\Agent\elastic-agent-9.0.3-windows-x86_64.zip
+    dest: C:\Temp\Agent\
+  when: agent_service.exists == false
 
-- name: Copy sysmon config
-  win_copy:
-    src: sysmonconfig-export.xml
-    dest: c:\sysmon\sysmonconfig-export.xml
+- name: copy over agent config
+  template:
+    src: elastic-agent.yml
+    dest: C:\Program Files\Elastic\Agent\elastic-agent.yml
+  vars:
+    elastic_password: "{{ elastic_password }}"
 
-# RUN sysmon
-- name: check sysmon service
-  win_service:
-    name: sysmon64
-  register: result
-  failed_when: result is not defined
-  ignore_errors: yes
-
-- name: Run sysmon
-  win_command: "{{ sysmon_install_location }}\\sysmon64.exe -accepteula -i {{ sysmon_install_location }}\\sysmonconfig-export.xml"
-  args:
-    chdir: "{{ sysmon_install_location }}"
-  when: result.state is not defined or result.name is not defined
-
-# RUN winlogbeat
-- name: check winlogbeat service
-  win_service:
-    name: winlogbeat
-  register: resultwlb
-  failed_when: resultwlb is not defined
-  ignore_errors: yes
-
-- name: Reboot before launch setup
-  win_reboot:
-    reboot_timeout: 600
-    post_reboot_delay: 100
-  when: resultwlb.state is defined and resultwlb.state != 'running'
-
-- name: Run winlogbeat setup
-  win_command: "winlogbeat setup -e"
-  args:
-    chdir: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\"
-  when: resultwlb.state is defined and resultwlb.state != 'running'
-
-# RUN winlogbeat
-- name: check winlogbeat service
-  win_service:
-    name: winlogbeat
-    start_mode: auto
-    state: started
-  when: resultwlb.state is defined and resultwlb.state != 'running'
+- name: restart elastic agent
+  ansible.windows.win_service:
+    name: "Elastic Agent"
+    state: restarted

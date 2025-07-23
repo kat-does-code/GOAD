@@ -1,0 +1,35 @@
+
+# Create certs for fleet server
+- name: create certs directory
+  file: 
+    path: /etc/elastic-agent/certs/
+    state: directory
+    mode: '0750'
+    owner: elasticsearch
+    group: root
+
+- name: create fleet ca cert
+  become: true
+  command: /usr/share/elasticsearch/bin/elasticsearch-certutil ca --pem --out /etc/elastic-agent/certs/elastic-stack-ca.zip
+
+- name: unzip fleet ca cert
+  become: true
+  unarchive:
+    src: /etc/elastic-agent/certs/elastic-stack-ca.zip
+    dest: /etc/elastic-agent/certs/
+    remote_src: true
+
+- name: create fleet server cert
+  become: true
+  command: >
+    /usr/share/elasticsearch/bin/elasticsearch-certutil cert
+    --ca-cert /etc/elastic-agent/certs/ca/ca.crt
+    --ca-key /etc/elastic-agent/certs/ca/ca.key
+    --pem --out /etc/elastic-agent/certs/fleet-server.zip
+
+- name: unzip fleet server cert
+  become: true
+  unarchive:
+    src: /etc/elastic-agent/certs/fleet-server.zip
+    dest: /etc/elastic-agent/certs/
+    remote_src: true

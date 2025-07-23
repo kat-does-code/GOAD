@@ -1,0 +1,31 @@
+outputs:
+  default:
+    type: elasticsearch
+    hosts: ["https://192.168.56.50:9200"]
+    username: elastic
+    password: "{{ elastic_password }}"
+    ssl:
+      verification_mode: none
+
+inputs:
+  - type: winlog
+    enabled: true
+    streams:
+      - event_logs:
+          - name: Application
+          - name: Security
+          - name: System
+
+  - type: system/metrics
+    enabled: true
+    streams:
+      - metricset: cpu
+        period: 10s
+      - metricset: memory
+        period: 10s
+      - metricset: network
+        period: 10s
+      - metricset: disk
+        period: 60s
+      - metricset: system
+        period: 60s

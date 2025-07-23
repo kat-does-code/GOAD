@@ -90,6 +90,7 @@ discovery.type: single-node
 
 # Disable transport security
 xpack.security.transport.ssl.enabled: false
+# xpack.security.transport.ssl.keystore.path: /etc/elasticsearch/certs/transport.p12
 
 # Enable Security
 xpack.security.enabled: true

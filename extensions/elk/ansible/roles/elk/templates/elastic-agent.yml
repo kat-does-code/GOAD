@@ -1,0 +1,18 @@
+outputs:
+  default:
+    type: elasticsearch
+    hosts: ["https://goad-vm-elk:9200"]
+    username: elastic
+    password: "{{ elastic_password}}"
+    ssl:
+      certificate_authorities:
+        - /etc/elasticsearch/certs/http_ca.crt
+
+inputs:
+  - type: system/metrics
+    enabled: true
+    streams:
+      - data_stream:
+          dataset: system.cpu
+          type: metrics
+        period: 10s
